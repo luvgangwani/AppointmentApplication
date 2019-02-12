@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="app.css" />
+    <title>Wisdom Pet Medicine</title>
+    <script type="text/javascript" defer>
+        const electron = require('electron')
+        const shell = electron.shell
+        const ipc = electron.ipcRenderer
+    </script>
+</head>
+<body id="page-info">
+    <main class="info-content">
+        <h3 class="page-headline">
+            Wisdom Pet
+        </h3>
+        <p>
+            Welcome to Wisdom Pet App!
+            <strong>Version 1.0.0</strong>
+            <small>The link to the website is <a href="#" onclick="shell.openExternal('http://google.com')">this</a>.</small>
+        </p>
+        <p><a href="#" onclick="ipc.sendSync('closeInfoWindow')">Close Window</a></p>
+    </main>
+</body>
+</html>
