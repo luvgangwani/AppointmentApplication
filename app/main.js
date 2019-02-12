@@ -34,6 +34,11 @@ app.on('ready', () => {
         appWindow.show();
     });
 
+    ipc.on('openInfoWindow', (event, args) => {
+        event.returnValue = '';
+        infoWindow.show();
+    });
+
     ipc.on('closeInfoWindow', (event, args) => {
         event.returnValue = '';
         infoWindow.hide();
