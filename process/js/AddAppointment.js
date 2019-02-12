@@ -16,6 +16,12 @@ var AddAppointment = createReactClass({
             aptNotes: this.refs.inputAptNotes.value,
         }
         this.props.addAppointment(tempItem);
+
+        this.refs.inputPetName.value = ''
+        this.refs.inputPetOwner.value = ''
+        this.refs.inputAptDate.value = ''
+        this.refs.inputAptTime.value = ''
+        this.refs.inputAptNotes.value = ''
     },
     render: function(){
         return(

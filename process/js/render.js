@@ -15,6 +15,7 @@ var Toolbar = require('./Toolbar');
 var electron = eRequire('electron');
 var ipc = electron.ipcRenderer;
 var AddAppointment = require('./AddAppointment');
+var HeaderNav = require('./HeaderNav');
 
 var AptList = require('./AptList');
 
@@ -23,7 +24,10 @@ var MainInterface = createReactClass({
     getInitialState: function(){
         return {
             aptBodyVisible: false,
-            myAppointments: loadApts
+            myAppointments: loadApts,
+            queryText: '',
+            orderBy: 'petName',
+            orderDir: 'asc'
         }
     },
     deleteMessage: function(item){
@@ -58,7 +62,25 @@ var MainInterface = createReactClass({
             aptBodyVisible: false
         });
     },
+    searchApts: function(query){
+        this.setState({
+            queryText: query
+        });
+    },
+    reOrder: function(orderBy, orderDir){
+        console.log(orderBy);
+        console.log(orderDir);
+        this.setState({
+            orderBy: orderBy,
+            orderDir: orderDir
+        });
+    },
     render: function(){
+        var filteredApts = []
+        var queryText = this.state.queryText;
+        var orderBy = this.state.orderBy;
+        var orderDir = this.state.orderDir;
+
         var myAppointments = this.state.myAppointments;
 
         if (this.state.aptBodyVisible === true){
@@ -68,7 +90,22 @@ var MainInterface = createReactClass({
             $('#addAppointment').modal('hide');
         }
 
-        myAppointments = myAppointments.map(function(item, index){
+        for (var i = 0; i < myAppointments.length; i++){
+            if (
+                (myAppointments[i].petName.toLowerCase().indexOf(queryText) != -1) ||
+                (myAppointments[i].ownerName.toLowerCase().indexOf(queryText) != -1) ||
+                (myAppointments[i].aptDate.toLowerCase().indexOf(queryText) != -1) ||
+                (myAppointments[i].aptNotes.toLowerCase().indexOf(queryText) != -1)
+            ){
+                filteredApts.push(myAppointments[i]);
+            }
+        }
+
+        filteredApts = _.orderBy(filteredApts, function(item){
+            return item[orderBy].toLowerCase();
+        }, orderDir);
+
+        filteredApts = filteredApts.map(function(item, index){
            return( 
            <AptList
             key = {index}
@@ -81,6 +118,11 @@ var MainInterface = createReactClass({
         return(
             
             <div className="application">
+                <HeaderNav
+                    onSearch = {this.searchApts}
+                    orderBy = {this.state.orderBy}
+                    orderDir = {this.state.orderDir}
+                    onReOrder = {this.reOrder} />
                 <div className = "interface">
                     <Toolbar
                     handleAbout = {this.showAbout}
@@ -95,7 +137,7 @@ var MainInterface = createReactClass({
                     <div className="appointments col-sm-12">
                         <h2 className="appointments-headline">Current Appointments</h2>
                         <ul className="item-list media-list">
-                            {myAppointments}
+                            {filteredApts}
                         </ul>
                     </div>{/* col-sm-12 */}
                     </div>{/* row */}
