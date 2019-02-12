@@ -38,6 +38,16 @@ var MainInterface = createReactClass({
             myAppointments: newApts
         });
     },
+    componentDidMount: function(){
+        ipc.on('addAppointment',function(event, message) {
+            this.toggleAddDisplay();
+        }.bind(this));
+    },
+    componentWillUnmount: function(){
+        ipc.removeListener('addAppointment',function(event, message) {
+            this.toggleAddDisplay();
+        }.bind(this));
+    },
     componentDidUpdate: function(){
         fs.writeFile(dataLocation, JSON.stringify(this.state.myAppointments), 'utf-8', function(err){
             if (err){

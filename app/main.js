@@ -6,6 +6,18 @@ const app = electron.app;
 
 const ipc = electron.ipcMain;
 
+var Menu = electron.Menu;
+var myAppMenu, menuTemplate;
+
+function toggleWindow(whichWindow){
+    if(whichWindow.isVisible()){
+        whichWindow.hide();
+    }
+    else {
+        whichWindow.show();
+    }
+}
+
 app.on('ready', () => {
     var appWindow ;
     
@@ -43,4 +55,65 @@ app.on('ready', () => {
         event.returnValue = '';
         infoWindow.hide();
     });
+
+    menuTemplate = [
+        {
+            label: 'Wisdom Pet',
+            submenu: [
+                {
+                    label: 'About this App',
+                    accelerator: process.platform === 'darwin'? "Command-I" : "Ctrl+I",
+                    click(item) { toggleWindow(infoWindow) }
+                },
+                {
+                    label: 'Add Appointment',
+                    accelerator: process.platform === 'darwin' ? 'Command-N': 'Ctrl+N',
+                    click(item, focusedWindow) {
+                        if (focusedWindow) focusedWindow.webContents.send('addAppointment');
+                    }
+                },
+                {
+                    role: 'help',
+                    label: 'Our Website',
+                    click() {
+                        electron.shell.openExternal('http://raybo.org')
+                    }
+                },
+                {
+                    role: 'close'
+                },
+                {
+                    role: 'quit'
+                }
+            ]
+        },
+        {
+            label: 'Edit',
+            submenu: [
+                {
+                    role: 'undo'
+                },
+                {
+                    role: 'redo'
+                },
+                {
+                    role: 'cut'
+                },
+                {
+                    role: 'copy'
+                },
+                {
+                    role: 'paste'
+                },
+                {
+                    role: 'selectall'
+                }
+
+            ]
+        }
+    ];
+
+    myAppMenu = Menu.buildFromTemplate(menuTemplate);
+
+    Menu.setApplicationMenu(myAppMenu);
 });
