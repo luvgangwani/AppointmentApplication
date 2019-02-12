@@ -1,0 +1,1 @@
+<p>An application to explore Electron JS</p>
